@@ -4,6 +4,7 @@ using ImageFusion.ViewModels;
 using ImageFusion.Views;
 using Microsoft.Extensions.Logging;
 using SkiaSharp.Views.Maui.Controls.Hosting;
+using CoreServices = ImageFusion.Core.Services;
 
 namespace ImageFusion;
 
@@ -22,6 +23,8 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        builder.Services.AddSingleton<CoreServices.IImageProcessingService, CoreServices.ImageProcessingService>();
+        
         builder.Services.AddSingleton<ISettingsService, SettingsService>();
         builder.Services.AddSingleton<IImageProcessingService, ImageProcessingService>();
         builder.Services.AddSingleton<IFileService, FileService>();

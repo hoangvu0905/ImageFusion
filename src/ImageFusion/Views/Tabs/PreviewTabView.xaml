@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:ImageFusion.ViewModels"
+             xmlns:converters="clr-namespace:ImageFusion.Converters"
+             x:Class="ImageFusion.Views.Tabs.PreviewTabView"
+             x:DataType="viewmodels:MainViewModel">
+
+    <ContentView.Resources>
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </ContentView.Resources>
+
+    <Grid>
+        <ActivityIndicator IsRunning="{Binding IsProcessing}"
+                          IsVisible="{Binding IsProcessing}"
+                          VerticalOptions="Center"
+                          HorizontalOptions="Center" />
+        
+        <!-- Preview Images List -->
+        <ScrollView Orientation="Vertical" 
+                   IsVisible="{Binding IsProcessing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}">
+            <VerticalStackLayout Spacing="20" Padding="16">
+                <Label Text="{Binding PreviewImages.Count, StringFormat='Output Images: {0}'}"
+                       FontSize="16"
+                       FontAttributes="Bold"
+                       HorizontalOptions="Center"
+                       IsVisible="{Binding HasImages}" />
+                       
+                <CollectionView ItemsSource="{Binding PreviewImages}"
+                               HeightRequest="400"
+                               ItemsLayout="HorizontalList">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Border StrokeShape="RoundRectangle 8"
+                                   Stroke="{StaticResource Gray200}"
+                                   StrokeThickness="2"
+                                   Margin="8"
+                                   Padding="4">
+                                <Image Source="{Binding}"
+                                       Aspect="AspectFit"
+                                       WidthRequest="350"
+                                       HeightRequest="350" />
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+        
+        <Label Text="Add images to see preview"
+               IsVisible="{Binding HasImages, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}"
+               HorizontalOptions="Center"
+               VerticalOptions="Center"
+               FontSize="16" />
+    </Grid>
+</ContentView>

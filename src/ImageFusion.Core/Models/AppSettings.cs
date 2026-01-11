@@ -12,4 +12,5 @@ public class AppSettings
     public string SplitColorHex { get; set; } = AppConstants.DefaultSplitColorHex;
     public MergeLayoutType MergeLayout { get; set; } = MergeLayoutType.Grid;
     public ImageFormatType ImageFormat { get; set; } = ImageFormatType.Png;
+    public int ImagesPerOutput { get; set; } = AppConstants.DefaultImagesPerOutput;
 }

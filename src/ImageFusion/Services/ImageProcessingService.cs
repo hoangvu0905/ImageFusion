@@ -2,13 +2,18 @@ using ImageFusion.Core.Constants;
 using ImageFusion.Core.Models;
 using ImageFusion.Models;
 using SkiaSharp;
-using CoreImageProcessingService = ImageFusion.Core.Services.ImageProcessingService;
+using CoreImageProcessingService = ImageFusion.Core.Services.IImageProcessingService;
 
 namespace ImageFusion.Services;
 
 public class ImageProcessingService : IImageProcessingService
 {
-    private readonly CoreImageProcessingService _coreService = new();
+    private readonly CoreImageProcessingService _coreService;
+    
+    public ImageProcessingService(CoreImageProcessingService coreService)
+    {
+        _coreService = coreService;
+    }
     
     public SKBitmap ProcessImages(
         IList<ImageItem> images,

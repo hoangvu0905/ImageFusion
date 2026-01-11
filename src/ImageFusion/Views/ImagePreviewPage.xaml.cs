@@ -1,4 +1,4 @@
-using ImageFusion.Core.Constants;
+using ImageFusion.Resources.Strings;
 using ImageFusion.Services;
 
 namespace ImageFusion.Views;
@@ -8,14 +8,19 @@ public partial class ImagePreviewPage : ContentPage
     private readonly byte[] _imageData;
     private readonly IFileService _fileService;
     
-    public ImagePreviewPage(byte[] imageData)
+    public ImagePreviewPage(IFileService fileService)
     {
         InitializeComponent();
-        _imageData = imageData;
-        _fileService = Application.Current?.Handler?.MauiContext?.Services.GetService<IFileService>() 
-                       ?? new FileService();
-        
-        PreviewImage.Source = ImageSource.FromStream(() => new MemoryStream(_imageData));
+        _fileService = fileService;
+        _imageData = [];
+    }
+    
+    public void SetImageData(byte[] imageData)
+    {
+        PreviewImage.Source = ImageSource.FromStream(() => new MemoryStream(imageData));
+        typeof(ImagePreviewPage)
+            .GetField("_imageData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?
+            .SetValue(this, imageData);
     }
     
     private async void OnCloseClicked(object? sender, EventArgs e)
@@ -25,13 +30,15 @@ public partial class ImagePreviewPage : ContentPage
     
     private async void OnSaveClicked(object? sender, EventArgs e)
     {
+        if (_imageData.Length == 0) return;
+        
         var fileName = $"ImageFusion_{DateTime.Now:yyyyMMdd_HHmmss}.png";
         var result = await _fileService.SaveImageAsync(_imageData, fileName);
         
         var message = result != null
-            ? $"{AppConstants.ExportSuccessMessage}\n{result}"
-            : AppConstants.ExportFailedMessage;
+            ? $"{AppStrings.ExportSuccessMessage}\n{result}"
+            : AppStrings.ExportFailedMessage;
         
-        await DisplayAlert(AppConstants.ApplicationTitle, message, "OK");
+        await DisplayAlert(AppStrings.ApplicationTitle, message, AppStrings.OkButtonText);
     }
 }

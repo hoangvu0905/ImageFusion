@@ -2,217 +2,96 @@
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:viewmodels="clr-namespace:ImageFusion.ViewModels"
-             xmlns:models="clr-namespace:ImageFusion.Models"
+             xmlns:tabs="clr-namespace:ImageFusion.Views.Tabs"
              xmlns:converters="clr-namespace:ImageFusion.Converters"
              x:Class="ImageFusion.MainPage"
              x:DataType="viewmodels:MainViewModel"
              Title="ImageFusion">
 
     <ContentPage.Resources>
+        <converters:TabIndexToBoolConverter x:Key="TabIndexToBoolConverter" />
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
-        <converters:CountToBoolConverter x:Key="CountToBoolConverter" />
     </ContentPage.Resources>
 
-    <Grid RowDefinitions="Auto,*">
+    <Grid RowDefinitions="Auto,Auto,*">
         <!-- Header -->
         <Grid Grid.Row="0" 
-              Padding="16,8" 
+              Padding="16,12" 
               BackgroundColor="{StaticResource Primary}"
               ColumnDefinitions="*,Auto,Auto">
             
             <Label Text="ImageFusion" 
-                   FontSize="20" 
+                   FontSize="22" 
                    FontAttributes="Bold"
                    TextColor="White"
                    VerticalOptions="Center" />
             
             <Button Grid.Column="1"
-                    Text="Add"
+                    Text="➕ Add"
                     Margin="8,0"
                     Command="{Binding AddImagesCommand}"
                     BackgroundColor="White"
-                    TextColor="{StaticResource Primary}" />
+                    TextColor="{StaticResource Primary}"
+                    FontAttributes="Bold"
+                    CornerRadius="20"
+                    Padding="16,8" />
             
             <Button Grid.Column="2"
-                    Text="Export"
+                    Text="💾 Export"
                     Command="{Binding ExportCommand}"
-                    BackgroundColor="White"
-                    TextColor="{StaticResource Primary}" />
+                    BackgroundColor="#4CAF50"
+                    TextColor="White"
+                    FontAttributes="Bold"
+                    CornerRadius="20"
+                    Padding="16,8" />
         </Grid>
 
-        <!-- Tab Content -->
-        <Grid Grid.Row="1" RowDefinitions="*,Auto">
-            <!-- Tab Pages -->
-            <Grid Grid.Row="0">
-                <!-- Original Tab -->
-                <Grid IsVisible="{Binding SelectedTabIndex, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=1}">
-                    <Grid x:Name="OriginalTab">
-                        <!-- No Images State -->
-                        <VerticalStackLayout IsVisible="{Binding HasImages, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}"
-                                           VerticalOptions="Center"
-                                           HorizontalOptions="Center"
-                                           Spacing="20">
-                            <Label Text="No images added yet"
-                                   FontSize="18"
-                                   HorizontalOptions="Center" />
-                            <Button Text="Add Images"
-                                    Command="{Binding AddImagesCommand}"
-                                    HorizontalOptions="Center" />
-                        </VerticalStackLayout>
-
-                        <!-- Images List -->
-                        <CollectionView IsVisible="{Binding HasImages}"
-                                       ItemsSource="{Binding Images}"
-                                       ItemsLayout="HorizontalList"
-                                       HeightRequest="250"
-                                       VerticalOptions="Center">
-                            <CollectionView.ItemTemplate>
-                                <DataTemplate x:DataType="models:ImageItem">
-                                    <Grid Margin="8" WidthRequest="200" HeightRequest="200">
-                                        <Border StrokeShape="RoundRectangle 8"
-                                               Stroke="{StaticResource Gray200}"
-                                               StrokeThickness="1">
-                                            <Image Source="{Binding ThumbnailSource}"
-                                                   Aspect="AspectFit" />
-                                        </Border>
-                                        <Button Text="✕"
-                                               WidthRequest="32"
-                                               HeightRequest="32"
-                                               Padding="0"
-                                               CornerRadius="16"
-                                               BackgroundColor="#FF4444"
-                                               TextColor="White"
-                                               HorizontalOptions="Start"
-                                               VerticalOptions="Start"
-                                               Margin="4"
-                                               Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:MainViewModel}}, Path=RemoveImageCommand}"
-                                               CommandParameter="{Binding .}" />
-                                    </Grid>
-                                </DataTemplate>
-                            </CollectionView.ItemTemplate>
-                        </CollectionView>
-                    </Grid>
-                </Grid>
-
-                <!-- Preview Tab -->
-                <Grid IsVisible="{Binding SelectedTabIndex, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=0}">
-                    <Grid x:Name="PreviewTab">
-                        <ActivityIndicator IsRunning="{Binding IsProcessing}"
-                                          IsVisible="{Binding IsProcessing}"
-                                          VerticalOptions="Center"
-                                          HorizontalOptions="Center" />
-                        
-                        <ScrollView Orientation="Both" IsVisible="{Binding IsProcessing, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}">
-                            <Image Source="{Binding PreviewImageSource}"
-                                   Aspect="AspectFit"
-                                   HorizontalOptions="Center"
-                                   VerticalOptions="Center">
-                                <Image.GestureRecognizers>
-                                    <TapGestureRecognizer Tapped="OnPreviewImageTapped" />
-                                </Image.GestureRecognizers>
-                            </Image>
-                        </ScrollView>
-                        
-                        <Label Text="Add images to see preview"
-                               IsVisible="{Binding HasImages, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}"
-                               HorizontalOptions="Center"
-                               VerticalOptions="Center"
-                               FontSize="16" />
-                    </Grid>
-                </Grid>
-
-                <!-- Settings Tab -->
-                <ScrollView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=2}">
-                    <VerticalStackLayout Padding="16" Spacing="16">
-                        <Label Text="Output Settings" FontSize="18" FontAttributes="Bold" />
-                        
-                        <!-- Output Dimensions -->
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-                            <VerticalStackLayout Grid.Column="0">
-                                <Label Text="Width" />
-                                <Entry Text="{Binding OutputWidth}" Keyboard="Numeric" />
-                            </VerticalStackLayout>
-                            <VerticalStackLayout Grid.Column="1">
-                                <Label Text="Height" />
-                                <Entry Text="{Binding OutputHeight}" Keyboard="Numeric" />
-                            </VerticalStackLayout>
-                        </Grid>
-                        
-                        <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
-                        <Label Text="Border Settings" FontSize="18" FontAttributes="Bold" />
-                        
-                        <!-- Border Settings -->
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-                            <VerticalStackLayout Grid.Column="0">
-                                <Label Text="Border Pixel" />
-                                <Entry Text="{Binding BorderPixel}" Keyboard="Numeric" />
-                            </VerticalStackLayout>
-                            <VerticalStackLayout Grid.Column="1">
-                                <Label Text="Border Color (Hex)" />
-                                <Entry Text="{Binding BorderColorHex}" Placeholder="#FFFFFF" />
-                            </VerticalStackLayout>
-                        </Grid>
-                        
-                        <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
-                        <Label Text="Split Settings" FontSize="18" FontAttributes="Bold" />
-                        
-                        <!-- Split Settings -->
-                        <Grid ColumnDefinitions="*,*" ColumnSpacing="16">
-                            <VerticalStackLayout Grid.Column="0">
-                                <Label Text="Split Pixel" />
-                                <Entry Text="{Binding SplitPixel}" Keyboard="Numeric" />
-                            </VerticalStackLayout>
-                            <VerticalStackLayout Grid.Column="1">
-                                <Label Text="Split Color (Hex)" />
-                                <Entry Text="{Binding SplitColorHex}" Placeholder="#FFFFFF" />
-                            </VerticalStackLayout>
-                        </Grid>
-                        
-                        <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
-                        <Label Text="Merge Layout" FontSize="18" FontAttributes="Bold" />
-                        
-                        <!-- Layout Options -->
-                        <Label Text="(Available when 3+ images)" 
-                               FontSize="12" 
-                               TextColor="{StaticResource Gray400}"
-                               IsVisible="{Binding ShowLayoutOptions, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=invert}" />
-                        
-                        <Picker Title="Select Layout"
-                               ItemsSource="{Binding AvailableLayouts}"
-                               SelectedItem="{Binding MergeLayout}"
-                               IsEnabled="{Binding ShowLayoutOptions}" />
-                        
-                        <BoxView HeightRequest="1" Color="{StaticResource Gray200}" />
-                        <Label Text="Image Format" FontSize="18" FontAttributes="Bold" />
-                        
-                        <!-- Format Options -->
-                        <Picker Title="Select Format"
-                               ItemsSource="{Binding AvailableFormats}"
-                               SelectedItem="{Binding ImageFormat}" />
-                    </VerticalStackLayout>
-                </ScrollView>
-            </Grid>
-
-            <!-- Tab Bar -->
-            <Grid Grid.Row="1" 
-                  ColumnDefinitions="*,*,*"
-                  BackgroundColor="{StaticResource White}"
-                  Padding="0,8">
-                
+        <!-- Tab Bar at Top -->
+        <Border Grid.Row="1" 
+                StrokeThickness="0"
+                BackgroundColor="{StaticResource White}"
+                Padding="8">
+            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="8">
                 <Button Grid.Column="0"
-                       Text="Preview"
-                       BackgroundColor="{Binding SelectedTabIndex, Converter={StaticResource BoolToVisibilityConverter}, ConverterParameter=0}"
-                       Clicked="OnPreviewTabClicked"
-                       IsEnabled="{Binding HasImages}" />
+                       Text="📷 Original"
+                       Command="{Binding SelectTabCommand}"
+                       CommandParameter="1"
+                       BackgroundColor="{Binding SelectedTabIndex, Converter={StaticResource TabIndexToBoolConverter}, ConverterParameter=1}"
+                       TextColor="{StaticResource Primary}"
+                       CornerRadius="20"
+                       FontAttributes="Bold" />
                 
                 <Button Grid.Column="1"
-                       Text="Original"
-                       Clicked="OnOriginalTabClicked" />
+                       Text="👁️ Preview"
+                       Command="{Binding SelectTabCommand}"
+                       CommandParameter="0"
+                       BackgroundColor="{Binding SelectedTabIndex, Converter={StaticResource TabIndexToBoolConverter}, ConverterParameter=0}"
+                       TextColor="{StaticResource Primary}"
+                       IsEnabled="{Binding HasImages}"
+                       CornerRadius="20"
+                       FontAttributes="Bold" />
                 
                 <Button Grid.Column="2"
-                       Text="Settings"
-                       Clicked="OnSettingsTabClicked" />
+                       Text="⚙️ Settings"
+                       Command="{Binding SelectTabCommand}"
+                       CommandParameter="2"
+                       BackgroundColor="{Binding SelectedTabIndex, Converter={StaticResource TabIndexToBoolConverter}, ConverterParameter=2}"
+                       TextColor="{StaticResource Primary}"
+                       CornerRadius="20"
+                       FontAttributes="Bold" />
             </Grid>
+        </Border>
+
+        <!-- Tab Content -->
+        <Grid Grid.Row="2" BackgroundColor="#F5F5F5">
+            <!-- Original Tab -->
+            <tabs:OriginalTabView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource TabIndexToBoolConverter}, ConverterParameter=1}" />
+
+            <!-- Preview Tab -->
+            <tabs:PreviewTabView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource TabIndexToBoolConverter}, ConverterParameter=0}" />
+
+            <!-- Settings Tab -->
+            <tabs:SettingsTabView IsVisible="{Binding SelectedTabIndex, Converter={StaticResource TabIndexToBoolConverter}, ConverterParameter=2}" />
         </Grid>
     </Grid>
 </ContentPage>

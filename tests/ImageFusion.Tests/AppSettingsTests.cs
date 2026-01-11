@@ -20,6 +20,7 @@ public class AppSettingsTests
         Assert.Equal(AppConstants.DefaultSplitColorHex, settings.SplitColorHex);
         Assert.Equal(MergeLayoutType.Grid, settings.MergeLayout);
         Assert.Equal(ImageFormatType.Png, settings.ImageFormat);
+        Assert.Equal(AppConstants.DefaultImagesPerOutput, settings.ImagesPerOutput);
     }
     
     [Fact]
@@ -37,6 +38,7 @@ public class AppSettingsTests
         settings.SplitColorHex = "#CCCCCC";
         settings.MergeLayout = MergeLayoutType.FeatureMain;
         settings.ImageFormat = ImageFormatType.Jpeg;
+        settings.ImagesPerOutput = 6;
         
         // Assert
         Assert.Equal(800, settings.OutputWidth);
@@ -47,5 +49,6 @@ public class AppSettingsTests
         Assert.Equal("#CCCCCC", settings.SplitColorHex);
         Assert.Equal(MergeLayoutType.FeatureMain, settings.MergeLayout);
         Assert.Equal(ImageFormatType.Jpeg, settings.ImageFormat);
+        Assert.Equal(6, settings.ImagesPerOutput);
     }
 }

@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using ImageFusion.Core.Constants;
 using ImageFusion.Models;
+using ImageFusion.Resources.Strings;
 using ImageFusion.Services;
 using SkiaSharp;
 
@@ -46,7 +47,10 @@ public partial class MainViewModel : ObservableObject
     private ImageFormatType _imageFormat = ImageFormatType.Png;
     
     [ObservableProperty]
-    private ImageSource? _previewImageSource;
+    private int _imagesPerOutput = AppConstants.DefaultImagesPerOutput;
+    
+    [ObservableProperty]
+    private ObservableCollection<ImageSource> _previewImages = [];
     
     [ObservableProperty]
     private bool _isProcessing;
@@ -60,7 +64,7 @@ public partial class MainViewModel : ObservableObject
     public List<MergeLayoutType> AvailableLayouts { get; } = [MergeLayoutType.Grid, MergeLayoutType.FeatureMain];
     public List<ImageFormatType> AvailableFormats { get; } = [ImageFormatType.Png, ImageFormatType.Jpeg, ImageFormatType.Webp];
     
-    private byte[]? _currentPreviewData;
+    private List<byte[]> _currentPreviewDataList = [];
     
     public MainViewModel(
         ISettingsService settingsService,
@@ -96,6 +100,7 @@ public partial class MainViewModel : ObservableObject
         SplitColorHex = settings.SplitColorHex;
         MergeLayout = settings.MergeLayout;
         ImageFormat = settings.ImageFormat;
+        ImagesPerOutput = settings.ImagesPerOutput;
     }
     
     public async Task SaveSettingsAsync()
@@ -109,10 +114,20 @@ public partial class MainViewModel : ObservableObject
             SplitPixel = SplitPixel,
             SplitColorHex = SplitColorHex,
             MergeLayout = MergeLayout,
-            ImageFormat = ImageFormat
+            ImageFormat = ImageFormat,
+            ImagesPerOutput = ImagesPerOutput
         };
         
         await _settingsService.SaveSettingsAsync(settings);
+    }
+    
+    [RelayCommand]
+    private void SelectTab(string tabIndexStr)
+    {
+        if (int.TryParse(tabIndexStr, out var tabIndex))
+        {
+            SelectedTabIndex = tabIndex;
+        }
     }
     
     [RelayCommand]
@@ -139,16 +154,16 @@ public partial class MainViewModel : ObservableObject
         if (image == null) return;
         
         Images.Remove(image);
-        ReorderImages();
+        UpdateImageOrdersAfterReorder();
         _ = GeneratePreviewAsync();
     }
     
     [RelayCommand(CanExecute = nameof(HasImages))]
     private async Task ExportAsync()
     {
-        if (_currentPreviewData == null || !HasImages)
+        if (_currentPreviewDataList.Count == 0 || !HasImages)
         {
-            await ShowAlertAsync(AppConstants.NoImagesMessage);
+            await ShowAlertAsync(AppStrings.NoImagesMessage);
             return;
         }
         
@@ -159,12 +174,23 @@ public partial class MainViewModel : ObservableObject
             _ => "png"
         };
         
-        var fileName = $"ImageFusion_{DateTime.Now:yyyyMMdd_HHmmss}.{extension}";
-        var result = await _fileService.SaveImageAsync(_currentPreviewData, fileName);
+        var exportedCount = 0;
+        string? lastResult = null;
         
-        var message = result != null
-            ? $"{AppConstants.ExportSuccessMessage}\n{result}"
-            : AppConstants.ExportFailedMessage;
+        for (var i = 0; i < _currentPreviewDataList.Count; i++)
+        {
+            var fileName = $"ImageFusion_{DateTime.Now:yyyyMMdd_HHmmss}_{i + 1}.{extension}";
+            var result = await _fileService.SaveImageAsync(_currentPreviewDataList[i], fileName);
+            if (result != null)
+            {
+                exportedCount++;
+                lastResult = result;
+            }
+        }
+        
+        var message = exportedCount > 0
+            ? $"{AppStrings.ExportSuccessMessage}\n{exportedCount} image(s) exported"
+            : AppStrings.ExportFailedMessage;
         
         await ShowAlertAsync(message);
     }
@@ -174,7 +200,7 @@ public partial class MainViewModel : ObservableObject
         var page = Application.Current?.Windows.FirstOrDefault()?.Page;
         if (page != null)
         {
-            await page.DisplayAlert(AppConstants.ApplicationTitle, message, "OK");
+            await page.DisplayAlert(AppStrings.ApplicationTitle, message, AppStrings.OkButtonText);
         }
     }
     
@@ -182,8 +208,8 @@ public partial class MainViewModel : ObservableObject
     {
         if (!HasImages)
         {
-            PreviewImageSource = null;
-            _currentPreviewData = null;
+            PreviewImages.Clear();
+            _currentPreviewDataList.Clear();
             return;
         }
         
@@ -191,27 +217,44 @@ public partial class MainViewModel : ObservableObject
         
         try
         {
+            var newPreviewDataList = new List<byte[]>();
+            var orderedImages = Images.OrderBy(i => i.Order).ToList();
+            
             await Task.Run(() =>
             {
                 var borderColor = ParseColor(BorderColorHex);
                 var splitColor = ParseColor(SplitColorHex);
                 
-                using var bitmap = _imageProcessingService.ProcessImages(
-                    Images.OrderBy(i => i.Order).ToList(),
-                    OutputWidth,
-                    OutputHeight,
-                    BorderPixel,
-                    borderColor,
-                    SplitPixel,
-                    splitColor,
-                    MergeLayout);
+                var imageGroups = orderedImages
+                    .Select((img, idx) => new { img, idx })
+                    .GroupBy(x => x.idx / ImagesPerOutput)
+                    .Select(g => g.Select(x => x.img).ToList())
+                    .ToList();
                 
-                _currentPreviewData = _imageProcessingService.EncodeBitmap(bitmap, ImageFormat);
+                foreach (var group in imageGroups)
+                {
+                    using var bitmap = _imageProcessingService.ProcessImages(
+                        group,
+                        OutputWidth,
+                        OutputHeight,
+                        BorderPixel,
+                        borderColor,
+                        SplitPixel,
+                        splitColor,
+                        MergeLayout);
+                    
+                    var encodedData = _imageProcessingService.EncodeBitmap(bitmap, ImageFormat);
+                    newPreviewDataList.Add(encodedData);
+                }
             });
             
-            if (_currentPreviewData != null)
+            _currentPreviewDataList = newPreviewDataList;
+            
+            PreviewImages.Clear();
+            foreach (var data in _currentPreviewDataList)
             {
-                PreviewImageSource = ImageSource.FromStream(() => new MemoryStream(_currentPreviewData));
+                var capturedData = data;
+                PreviewImages.Add(ImageSource.FromStream(() => new MemoryStream(capturedData)));
             }
         }
         finally
@@ -220,22 +263,22 @@ public partial class MainViewModel : ObservableObject
         }
     }
     
+    public void UpdateImageOrdersAfterReorder()
+    {
+        for (var i = 0; i < Images.Count; i++)
+        {
+            Images[i].Order = i;
+        }
+        _ = GeneratePreviewAsync();
+    }
+    
     public void MoveImage(ImageItem image, int newIndex)
     {
         var oldIndex = Images.IndexOf(image);
         if (oldIndex < 0 || oldIndex == newIndex) return;
         
         Images.Move(oldIndex, newIndex);
-        ReorderImages();
-        _ = GeneratePreviewAsync();
-    }
-    
-    private void ReorderImages()
-    {
-        for (var i = 0; i < Images.Count; i++)
-        {
-            Images[i].Order = i;
-        }
+        UpdateImageOrdersAfterReorder();
     }
     
     private static SKColor ParseColor(string hex)
@@ -271,6 +314,7 @@ public partial class MainViewModel : ObservableObject
     partial void OnSplitColorHexChanged(string value) => OnSettingChanged();
     partial void OnMergeLayoutChanged(MergeLayoutType value) => OnSettingChanged();
     partial void OnImageFormatChanged(ImageFormatType value) => OnSettingChanged();
+    partial void OnImagesPerOutputChanged(int value) => OnSettingChanged();
     
     private void OnSettingChanged()
     {
@@ -278,5 +322,5 @@ public partial class MainViewModel : ObservableObject
         _ = GeneratePreviewAsync();
     }
     
-    public byte[]? GetCurrentPreviewData() => _currentPreviewData;
+    public List<byte[]> GetCurrentPreviewDataList() => _currentPreviewDataList;
 }

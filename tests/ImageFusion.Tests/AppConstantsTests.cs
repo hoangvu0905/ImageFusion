@@ -59,4 +59,17 @@ public class AppConstantsTests
     {
         Assert.Equal(90, AppConstants.DefaultJpegQuality);
     }
+    
+    [Fact]
+    public void DefaultImagesPerOutput_IsFour()
+    {
+        Assert.Equal(4, AppConstants.DefaultImagesPerOutput);
+    }
+    
+    [Fact]
+    public void ImagesPerOutputLimits_AreValid()
+    {
+        Assert.Equal(1, AppConstants.MinImagesPerOutput);
+        Assert.Equal(10, AppConstants.MaxImagesPerOutput);
+    }
 }
