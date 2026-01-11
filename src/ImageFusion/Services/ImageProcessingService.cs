@@ -50,4 +50,3 @@ public class ImageProcessingService : IImageProcessingService
         return _coreService.LoadBitmapFromBytes(data);
     }
 }
-

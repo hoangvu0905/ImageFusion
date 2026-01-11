@@ -1,6 +1,4 @@
 using ImageFusion.Core.Constants;
-using ImageFusion.Core.Models;
-using ImageFusion.Core.Services;
 using ImageFusion.Models;
 using SkiaSharp;
 
