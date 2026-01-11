@@ -1,2 +1,8 @@
 [assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "ImageFusion")]
 [assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "ImageFusion.Pages")]
+[assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "ImageFusion.Views")]
+[assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "ImageFusion.ViewModels")]
+[assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "ImageFusion.Models")]
+[assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "ImageFusion.Services")]
+[assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "ImageFusion.Core.Constants")]
+[assembly: XmlnsDefinition("http://schemas.microsoft.com/dotnet/maui/global", "ImageFusion.Converters")]

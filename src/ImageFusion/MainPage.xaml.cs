@@ -1,23 +1,45 @@
-﻿namespace ImageFusion;
+using ImageFusion.ViewModels;
+
+namespace ImageFusion;
 
 public partial class MainPage : ContentPage
 {
-    int count = 0;
-
-    public MainPage()
+    private readonly MainViewModel _viewModel;
+    
+    public MainPage(MainViewModel viewModel)
     {
         InitializeComponent();
+        _viewModel = viewModel;
+        BindingContext = _viewModel;
     }
-
-    private void OnCounterClicked(object? sender, EventArgs e)
+    
+    protected override async void OnAppearing()
     {
-        count++;
-
-        if (count == 1)
-            CounterBtn.Text = $"Clicked {count} time";
-        else
-            CounterBtn.Text = $"Clicked {count} times";
-
-        SemanticScreenReader.Announce(CounterBtn.Text);
+        base.OnAppearing();
+        await _viewModel.InitializeAsync();
+    }
+    
+    private void OnPreviewTabClicked(object? sender, EventArgs e)
+    {
+        _viewModel.SelectedTabIndex = 0;
+    }
+    
+    private void OnOriginalTabClicked(object? sender, EventArgs e)
+    {
+        _viewModel.SelectedTabIndex = 1;
+    }
+    
+    private void OnSettingsTabClicked(object? sender, EventArgs e)
+    {
+        _viewModel.SelectedTabIndex = 2;
+    }
+    
+    private async void OnPreviewImageTapped(object? sender, TappedEventArgs e)
+    {
+        var previewData = _viewModel.GetCurrentPreviewData();
+        if (previewData == null) return;
+        
+        var previewPage = new Views.ImagePreviewPage(previewData);
+        await Navigation.PushModalAsync(previewPage);
     }
 }

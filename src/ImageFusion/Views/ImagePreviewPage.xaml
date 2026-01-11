@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ImageFusion.Views.ImagePreviewPage"
+             Title="Preview"
+             BackgroundColor="Black">
+
+    <Grid RowDefinitions="Auto,*">
+        <!-- Header -->
+        <Grid Grid.Row="0" 
+              Padding="16,8"
+              BackgroundColor="#333333"
+              ColumnDefinitions="Auto,*,Auto">
+            
+            <Button Grid.Column="0"
+                    Text="Close"
+                    Clicked="OnCloseClicked"
+                    BackgroundColor="Transparent"
+                    TextColor="White" />
+            
+            <Label Grid.Column="1"
+                   Text="Preview"
+                   TextColor="White"
+                   FontSize="18"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+            
+            <Button Grid.Column="2"
+                    Text="Save"
+                    Clicked="OnSaveClicked"
+                    BackgroundColor="White"
+                    TextColor="Black" />
+        </Grid>
+
+        <!-- Zoomable Image -->
+        <ScrollView Grid.Row="1"
+                    Orientation="Both"
+                    HorizontalScrollBarVisibility="Always"
+                    VerticalScrollBarVisibility="Always">
+            <Image x:Name="PreviewImage"
+                   Aspect="AspectFit"
+                   HorizontalOptions="Center"
+                   VerticalOptions="Center" />
+        </ScrollView>
+    </Grid>
+</ContentPage>
