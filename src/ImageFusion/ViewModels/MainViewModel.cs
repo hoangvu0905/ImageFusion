@@ -253,8 +253,7 @@ public partial class MainViewModel : ObservableObject
             PreviewImages.Clear();
             foreach (var data in _currentPreviewDataList)
             {
-                var capturedData = data;
-                PreviewImages.Add(ImageSource.FromStream(() => new MemoryStream(capturedData)));
+                PreviewImages.Add(ImageSource.FromStream(() => new MemoryStream(data)));
             }
         }
         finally

@@ -5,7 +5,7 @@ namespace ImageFusion.Views;
 
 public partial class ImagePreviewPage : ContentPage
 {
-    private readonly byte[] _imageData;
+    private byte[] _imageData;
     private readonly IFileService _fileService;
     
     public ImagePreviewPage(IFileService fileService)
@@ -17,10 +17,8 @@ public partial class ImagePreviewPage : ContentPage
     
     public void SetImageData(byte[] imageData)
     {
-        PreviewImage.Source = ImageSource.FromStream(() => new MemoryStream(imageData));
-        typeof(ImagePreviewPage)
-            .GetField("_imageData", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)?
-            .SetValue(this, imageData);
+        _imageData = imageData;
+        PreviewImage.Source = ImageSource.FromStream(() => new MemoryStream(_imageData));
     }
     
     private async void OnCloseClicked(object? sender, EventArgs e)
