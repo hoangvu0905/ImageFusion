@@ -17,10 +17,10 @@ public class SettingsViewModel : BaseViewModel
     private int _width;
     private int _borderPixel;
     private Color _borderColor;
-    private string _selectedCombineType;
+    private string _selectedCombineType = AppConstants.DefaultSettings.DefaultCombineType;
     private int _splitPixel;
     private Color _splitColor;
-    private string _selectedImageFormat;
+    private string _selectedImageFormat = AppConstants.DefaultSettings.DefaultImageFormat;
     
     public ObservableCollection<string> CombineTypes { get; }
     public ObservableCollection<string> ImageFormats { get; }
@@ -28,49 +28,97 @@ public class SettingsViewModel : BaseViewModel
     public int Height
     {
         get => _height;
-        set => SetProperty(ref _height, value);
+        set
+        {
+            if (SetProperty(ref _height, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     
     public int Width
     {
         get => _width;
-        set => SetProperty(ref _width, value);
+        set
+        {
+            if (SetProperty(ref _width, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     
     public int BorderPixel
     {
         get => _borderPixel;
-        set => SetProperty(ref _borderPixel, value);
+        set
+        {
+            if (SetProperty(ref _borderPixel, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     
     public Color BorderColor
     {
         get => _borderColor;
-        set => SetProperty(ref _borderColor, value);
+        set
+        {
+            if (SetProperty(ref _borderColor, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     
     public string SelectedCombineType
     {
         get => _selectedCombineType;
-        set => SetProperty(ref _selectedCombineType, value);
+        set
+        {
+            if (SetProperty(ref _selectedCombineType, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     
     public int SplitPixel
     {
         get => _splitPixel;
-        set => SetProperty(ref _splitPixel, value);
+        set
+        {
+            if (SetProperty(ref _splitPixel, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     
     public Color SplitColor
     {
         get => _splitColor;
-        set => SetProperty(ref _splitColor, value);
+        set
+        {
+            if (SetProperty(ref _splitColor, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     
     public string SelectedImageFormat
     {
         get => _selectedImageFormat;
-        set => SetProperty(ref _selectedImageFormat, value);
+        set
+        {
+            if (SetProperty(ref _selectedImageFormat, value))
+            {
+                SaveSettings();
+            }
+        }
     }
     
     public SettingsViewModel(ISettingsService settingsService)
@@ -80,9 +128,6 @@ public class SettingsViewModel : BaseViewModel
         CombineTypes = new ObservableCollection<string>(_settingsService.GetCombineTypes());
         ImageFormats = new ObservableCollection<string>(_settingsService.GetImageFormats());
         
-        _selectedCombineType = AppConstants.DefaultSettings.DefaultCombineType;
-        _selectedImageFormat = AppConstants.DefaultSettings.DefaultImageFormat;
-        
         LoadSettings();
     }
     
@@ -90,17 +135,28 @@ public class SettingsViewModel : BaseViewModel
     {
         var settings = _settingsService.GetSettings();
         
-        Height = settings.Height;
-        Width = settings.Width;
-        BorderPixel = settings.BorderPixel;
-        BorderColor = Color.FromArgb(settings.BorderColor);
-        SelectedCombineType = settings.CombineType;
-        SplitPixel = settings.SplitPixel;
-        SplitColor = Color.FromArgb(settings.SplitColor);
-        SelectedImageFormat = settings.ImageFormat;
+        // Use backing fields directly to avoid triggering SaveSettings during load
+        _height = settings.Height;
+        _width = settings.Width;
+        _borderPixel = settings.BorderPixel;
+        _borderColor = Color.FromArgb(settings.BorderColor);
+        _selectedCombineType = settings.CombineType;
+        _splitPixel = settings.SplitPixel;
+        _splitColor = Color.FromArgb(settings.SplitColor);
+        _selectedImageFormat = settings.ImageFormat;
+        
+        // Notify UI of all changes
+        OnPropertyChanged(nameof(Height));
+        OnPropertyChanged(nameof(Width));
+        OnPropertyChanged(nameof(BorderPixel));
+        OnPropertyChanged(nameof(BorderColor));
+        OnPropertyChanged(nameof(SelectedCombineType));
+        OnPropertyChanged(nameof(SplitPixel));
+        OnPropertyChanged(nameof(SplitColor));
+        OnPropertyChanged(nameof(SelectedImageFormat));
     }
     
-    public void SaveSettings()
+    private void SaveSettings()
     {
         var settings = new AppSettings
         {

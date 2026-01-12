@@ -27,12 +27,34 @@ public class SettingsService : ISettingsService
     
     public AppSettings GetSettings()
     {
-        return _settings;
+        // Return a copy to avoid exposing internal state
+        return new AppSettings
+        {
+            Height = _settings.Height,
+            Width = _settings.Width,
+            BorderPixel = _settings.BorderPixel,
+            BorderColor = _settings.BorderColor,
+            CombineType = _settings.CombineType,
+            SplitPixel = _settings.SplitPixel,
+            SplitColor = _settings.SplitColor,
+            ImageFormat = _settings.ImageFormat
+        };
     }
     
     public void SaveSettings(AppSettings settings)
     {
-        _settings = settings;
+        // Store a copy to maintain encapsulation
+        _settings = new AppSettings
+        {
+            Height = settings.Height,
+            Width = settings.Width,
+            BorderPixel = settings.BorderPixel,
+            BorderColor = settings.BorderColor,
+            CombineType = settings.CombineType,
+            SplitPixel = settings.SplitPixel,
+            SplitColor = settings.SplitColor,
+            ImageFormat = settings.ImageFormat
+        };
     }
     
     public IReadOnlyList<string> GetCombineTypes()
