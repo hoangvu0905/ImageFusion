@@ -55,10 +55,22 @@ public partial class SettingsViewModel : BaseViewModel
     partial void OnWidthChanged(int value) => TrySaveSettings();
     partial void OnBorderPixelChanged(int value) => TrySaveSettings();
     partial void OnBorderColorChanged(Color value) => TrySaveSettings();
-    partial void OnSelectedCombineTypeChanged(string value) => TrySaveSettings();
+    partial void OnSelectedCombineTypeChanged(string? value)
+    {
+        if (value is not null)
+        {
+            TrySaveSettings();
+        }
+    }
     partial void OnSplitPixelChanged(int value) => TrySaveSettings();
     partial void OnSplitColorChanged(Color value) => TrySaveSettings();
-    partial void OnSelectedImageFormatChanged(string value) => TrySaveSettings();
+    partial void OnSelectedImageFormatChanged(string? value)
+    {
+        if (value is not null)
+        {
+            TrySaveSettings();
+        }
+    }
     
     private void TrySaveSettings()
     {
