@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentView xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:ImageFusion.ViewModels"
+             x:Class="ImageFusion.Views.OriginalView"
+             x:DataType="viewmodels:OriginalViewModel">
+    
+    <Grid RowDefinitions="*, Auto"
+          Padding="16">
+        
+        <CarouselView x:Name="OriginalCarousel"
+                      Grid.Row="0"
+                      ItemsSource="{Binding OriginalImages}"
+                      Position="{Binding CurrentPosition, Mode=TwoWay}"
+                      IndicatorView="{x:Reference OriginalIndicator}"
+                      Loop="False">
+            <CarouselView.ItemTemplate>
+                <DataTemplate>
+                    <Frame CornerRadius="12"
+                           Padding="8"
+                           Margin="8"
+                           HasShadow="True"
+                           BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                        <Grid RowDefinitions="*, Auto">
+                            <Image Grid.Row="0"
+                                   Source="{Binding ImageSource}"
+                                   Aspect="AspectFit"
+                                   HeightRequest="300" />
+                            <Label Grid.Row="1"
+                                   Text="{Binding Title}"
+                                   HorizontalOptions="Center"
+                                   FontSize="16"
+                                   Margin="0,8,0,0" />
+                        </Grid>
+                    </Frame>
+                </DataTemplate>
+            </CarouselView.ItemTemplate>
+        </CarouselView>
+        
+        <IndicatorView x:Name="OriginalIndicator"
+                       Grid.Row="1"
+                       HorizontalOptions="Center"
+                       Margin="0,16,0,0" />
+    </Grid>
+    
+</ContentView>

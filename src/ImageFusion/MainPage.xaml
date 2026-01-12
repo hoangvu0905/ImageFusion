@@ -1,36 +1,130 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ImageFusion.MainPage">
+             xmlns:viewmodels="clr-namespace:ImageFusion.ViewModels"
+             xmlns:views="clr-namespace:ImageFusion.Views"
+             x:Class="ImageFusion.MainPage"
+             x:DataType="viewmodels:MainViewModel"
+             Shell.NavBarIsVisible="False">
 
-    <ScrollView>
-        <VerticalStackLayout
-            Padding="30,0"
-            Spacing="25">
-            <Image
-                Source="dotnet_bot.png"
-                HeightRequest="185"
-                Aspect="AspectFit"
-                SemanticProperties.Description="dot net bot in a hovercraft number nine" />
-
-            <Label
-                Text="Hello, World!"
-                Style="{StaticResource Headline}"
-                SemanticProperties.HeadingLevel="Level1" />
-
-            <Label
-                Text="Welcome to &#10;.NET Multi-platform App UI"
-                Style="{StaticResource SubHeadline}"
-                SemanticProperties.HeadingLevel="Level2"
-                SemanticProperties.Description="Welcome to dot net Multi platform App U I" />
-
-            <Button
-                x:Name="CounterBtn"
-                Text="Click me" 
-                SemanticProperties.Hint="Counts the number of times you click"
-                Clicked="OnCounterClicked"
-                HorizontalOptions="Fill" />
-        </VerticalStackLayout>
-    </ScrollView>
+    <Grid RowDefinitions="Auto, *">
+        
+        <!-- Header -->
+        <Border Grid.Row="0"
+                BackgroundColor="{StaticResource Primary}"
+                Padding="16,12"
+                StrokeThickness="0">
+            <Grid ColumnDefinitions="*, Auto, Auto">
+                <Label Grid.Column="0"
+                       Text="{Binding ApplicationTitle}"
+                       FontSize="24"
+                       FontAttributes="Bold"
+                       TextColor="{StaticResource White}"
+                       VerticalOptions="Center" />
+                
+                <Button Grid.Column="1"
+                        Text="{Binding ExportButtonLabel}"
+                        Command="{Binding ExportCommand}"
+                        BackgroundColor="{StaticResource Secondary}"
+                        TextColor="{StaticResource Primary}"
+                        Margin="0,0,8,0" />
+                
+                <Button Grid.Column="2"
+                        Text="{Binding AddButtonLabel}"
+                        Command="{Binding AddCommand}"
+                        BackgroundColor="{StaticResource White}"
+                        TextColor="{StaticResource Primary}" />
+            </Grid>
+        </Border>
+        
+        <!-- TabBar Content -->
+        <Grid Grid.Row="1" RowDefinitions="*, Auto">
+            
+            <!-- Tab Content -->
+            <ContentView Grid.Row="0" x:Name="TabContentContainer" />
+            
+            <!-- Tab Bar -->
+            <Border Grid.Row="1"
+                    BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                    StrokeThickness="0"
+                    Padding="0">
+                <Border.Shadow>
+                    <Shadow Brush="{StaticResource Gray300Brush}"
+                            Offset="0,-2"
+                            Radius="4"
+                            Opacity="0.3" />
+                </Border.Shadow>
+                
+                <Grid ColumnDefinitions="*, *, *"
+                      HeightRequest="60">
+                    
+                    <!-- Preview Tab -->
+                    <Border Grid.Column="0"
+                            StrokeThickness="0"
+                            BackgroundColor="Transparent">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnPreviewTabTapped" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center"
+                                             HorizontalOptions="Center">
+                            <Label x:Name="PreviewTabLabel"
+                                   Text="{Binding PreviewTabTitle}"
+                                   FontSize="14"
+                                   HorizontalOptions="Center" />
+                            <BoxView x:Name="PreviewTabIndicator"
+                                     HeightRequest="3"
+                                     WidthRequest="60"
+                                     Color="Transparent"
+                                     Margin="0,4,0,0" />
+                        </VerticalStackLayout>
+                    </Border>
+                    
+                    <!-- Original Tab -->
+                    <Border Grid.Column="1"
+                            StrokeThickness="0"
+                            BackgroundColor="Transparent">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnOriginalTabTapped" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center"
+                                             HorizontalOptions="Center">
+                            <Label x:Name="OriginalTabLabel"
+                                   Text="{Binding OriginalTabTitle}"
+                                   FontSize="14"
+                                   HorizontalOptions="Center" />
+                            <BoxView x:Name="OriginalTabIndicator"
+                                     HeightRequest="3"
+                                     WidthRequest="60"
+                                     Color="{StaticResource Primary}"
+                                     Margin="0,4,0,0" />
+                        </VerticalStackLayout>
+                    </Border>
+                    
+                    <!-- Settings Tab -->
+                    <Border Grid.Column="2"
+                            StrokeThickness="0"
+                            BackgroundColor="Transparent">
+                        <Border.GestureRecognizers>
+                            <TapGestureRecognizer Tapped="OnSettingsTabTapped" />
+                        </Border.GestureRecognizers>
+                        <VerticalStackLayout VerticalOptions="Center"
+                                             HorizontalOptions="Center">
+                            <Label x:Name="SettingsTabLabel"
+                                   Text="{Binding SettingsTabTitle}"
+                                   FontSize="14"
+                                   HorizontalOptions="Center" />
+                            <BoxView x:Name="SettingsTabIndicator"
+                                     HeightRequest="3"
+                                     WidthRequest="60"
+                                     Color="Transparent"
+                                     Margin="0,4,0,0" />
+                        </VerticalStackLayout>
+                    </Border>
+                    
+                </Grid>
+            </Border>
+        </Grid>
+        
+    </Grid>
 
 </ContentPage>
