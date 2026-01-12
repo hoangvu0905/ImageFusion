@@ -1,14 +1,22 @@
-﻿namespace ImageFusion;
+﻿using ImageFusion.Pages;
+
+namespace ImageFusion;
 
 public partial class AppShell : Shell
 {
-    private readonly IServiceProvider _serviceProvider;
-    
-    public AppShell(IServiceProvider serviceProvider)
+    public AppShell()
     {
         InitializeComponent();
-        _serviceProvider = serviceProvider;
         
-        Routing.RegisterRoute(nameof(MainPage), typeof(MainPage));
+        Routing.RegisterRoute(nameof(PreviewPage), typeof(PreviewPage));
+        Routing.RegisterRoute(nameof(OriginalPage), typeof(OriginalPage));
+        Routing.RegisterRoute(nameof(SettingsPage), typeof(SettingsPage));
+        
+        // Set default tab to Original (index 1)
+        CurrentItem = Items[0];
+        if (CurrentItem is TabBar tabBar && tabBar.Items.Count > 1)
+        {
+            tabBar.CurrentItem = tabBar.Items[1];
+        }
     }
 }

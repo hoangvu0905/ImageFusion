@@ -1,6 +1,6 @@
-﻿using ImageFusion.Services;
+﻿using ImageFusion.Pages;
+using ImageFusion.Services;
 using ImageFusion.ViewModels;
-using ImageFusion.Views;
 using Microsoft.Extensions.Logging;
 
 namespace ImageFusion;
@@ -25,13 +25,11 @@ public static class MauiProgram
         builder.Services.AddTransient<PreviewViewModel>();
         builder.Services.AddTransient<OriginalViewModel>();
         builder.Services.AddTransient<SettingsViewModel>();
-        builder.Services.AddTransient<MainViewModel>();
         
-        // Register Views
-        builder.Services.AddTransient<PreviewView>();
-        builder.Services.AddTransient<OriginalView>();
-        builder.Services.AddTransient<SettingsView>();
-        builder.Services.AddTransient<MainPage>();
+        // Register Pages
+        builder.Services.AddTransient<PreviewPage>();
+        builder.Services.AddTransient<OriginalPage>();
+        builder.Services.AddTransient<SettingsPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
