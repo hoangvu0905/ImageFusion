@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ImageFusion.Models;
 
 namespace ImageFusion.ViewModels;
@@ -6,22 +7,13 @@ namespace ImageFusion.ViewModels;
 /// <summary>
 /// ViewModel for the Preview tab with carousel functionality.
 /// </summary>
-public class PreviewViewModel : BaseViewModel
+public partial class PreviewViewModel : BaseViewModel
 {
+    [ObservableProperty]
     private ObservableCollection<ImageItem> _previewImages = new();
+    
+    [ObservableProperty]
     private int _currentPosition;
-    
-    public ObservableCollection<ImageItem> PreviewImages
-    {
-        get => _previewImages;
-        set => SetProperty(ref _previewImages, value);
-    }
-    
-    public int CurrentPosition
-    {
-        get => _currentPosition;
-        set => SetProperty(ref _currentPosition, value);
-    }
     
     public PreviewViewModel()
     {

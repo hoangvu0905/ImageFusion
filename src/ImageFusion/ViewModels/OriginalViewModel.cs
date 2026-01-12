@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using ImageFusion.Models;
 
 namespace ImageFusion.ViewModels;
@@ -6,22 +7,13 @@ namespace ImageFusion.ViewModels;
 /// <summary>
 /// ViewModel for the Original tab with carousel functionality.
 /// </summary>
-public class OriginalViewModel : BaseViewModel
+public partial class OriginalViewModel : BaseViewModel
 {
+    [ObservableProperty]
     private ObservableCollection<ImageItem> _originalImages = new();
+    
+    [ObservableProperty]
     private int _currentPosition;
-    
-    public ObservableCollection<ImageItem> OriginalImages
-    {
-        get => _originalImages;
-        set => SetProperty(ref _originalImages, value);
-    }
-    
-    public int CurrentPosition
-    {
-        get => _currentPosition;
-        set => SetProperty(ref _currentPosition, value);
-    }
     
     public OriginalViewModel()
     {

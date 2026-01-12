@@ -1,4 +1,5 @@
-using System.Windows.Input;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using ImageFusion.Constants;
 
 namespace ImageFusion.ViewModels;
@@ -6,8 +7,9 @@ namespace ImageFusion.ViewModels;
 /// <summary>
 /// ViewModel for the Main page containing header and tab functionality.
 /// </summary>
-public class MainViewModel : BaseViewModel
+public partial class MainViewModel : BaseViewModel
 {
+    [ObservableProperty]
     private int _selectedTabIndex = 1; // Default to Original tab (index 1)
     
     public string ApplicationTitle => AppConstants.ApplicationTitle;
@@ -22,15 +24,6 @@ public class MainViewModel : BaseViewModel
     public OriginalViewModel OriginalViewModel { get; }
     public SettingsViewModel SettingsViewModel { get; }
     
-    public int SelectedTabIndex
-    {
-        get => _selectedTabIndex;
-        set => SetProperty(ref _selectedTabIndex, value);
-    }
-    
-    public ICommand ExportCommand { get; }
-    public ICommand AddCommand { get; }
-    
     public MainViewModel(
         PreviewViewModel previewViewModel,
         OriginalViewModel originalViewModel,
@@ -39,17 +32,16 @@ public class MainViewModel : BaseViewModel
         PreviewViewModel = previewViewModel;
         OriginalViewModel = originalViewModel;
         SettingsViewModel = settingsViewModel;
-        
-        ExportCommand = new RelayCommand(OnExport);
-        AddCommand = new RelayCommand(OnAdd);
     }
     
-    private void OnExport()
+    [RelayCommand]
+    private void Export()
     {
         // Export functionality to be implemented
     }
     
-    private void OnAdd()
+    [RelayCommand]
+    private void Add()
     {
         // Add functionality to be implemented
     }
