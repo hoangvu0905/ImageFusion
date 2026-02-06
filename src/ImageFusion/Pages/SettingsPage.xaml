@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:ImageFusion.ViewModels"
+             xmlns:strings="clr-namespace:ImageFusion.Resources.Strings"
+             xmlns:controls="clr-namespace:ImageFusion.Controls"
+             x:Class="ImageFusion.Pages.SettingsPage"
+             x:DataType="viewmodels:SettingsViewModel"
+             Shell.NavBarIsVisible="False">
+    
+    <Grid RowDefinitions="Auto, *">
+        
+        <!-- Header -->
+        <controls:HeaderView Grid.Row="0" />
+        
+        <!-- Content -->
+        <ScrollView Grid.Row="1" Padding="16">
+            <VerticalStackLayout Spacing="20">
+                
+                <!-- Image Dimensions Section -->
+                <Frame CornerRadius="8"
+                       Padding="16"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{x:Static strings:AppResources.SettingsImageDimensions}"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+                        
+                        <Grid ColumnDefinitions="*, *"
+                              ColumnSpacing="16">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="{x:Static strings:AppResources.SettingsWidth}" />
+                                <Entry Text="{Binding Width}"
+                                       Keyboard="Numeric"
+                                       Placeholder="Width" />
+                            </VerticalStackLayout>
+                            
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="{x:Static strings:AppResources.SettingsHeight}" />
+                                <Entry Text="{Binding Height}"
+                                       Keyboard="Numeric"
+                                       Placeholder="Height" />
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- Border Section -->
+                <Frame CornerRadius="8"
+                       Padding="16"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{x:Static strings:AppResources.SettingsBorder}"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+                        
+                        <Grid ColumnDefinitions="*, *"
+                              ColumnSpacing="16">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="{x:Static strings:AppResources.SettingsBorderPixel}" />
+                                <Entry Text="{Binding BorderPixel}"
+                                       Keyboard="Numeric"
+                                       Placeholder="Pixels" />
+                            </VerticalStackLayout>
+                            
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="{x:Static strings:AppResources.SettingsBorderColor}" />
+                                <Border StrokeShape="RoundRectangle 8"
+                                        StrokeThickness="1"
+                                        Stroke="{StaticResource Gray300}"
+                                        HeightRequest="44">
+                                    <Grid ColumnDefinitions="Auto, *">
+                                        <BoxView Grid.Column="0"
+                                                 Color="{Binding BorderColor}"
+                                                 WidthRequest="44"
+                                                 HeightRequest="44" />
+                                        <Entry Grid.Column="1"
+                                               x:Name="BorderColorEntry"
+                                               Text="{Binding BorderColor, Converter={StaticResource ColorToHexConverter}}"
+                                               Placeholder="#000000"
+                                               VerticalOptions="Center"
+                                               Margin="8,0" />
+                                    </Grid>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- Combine Type Section -->
+                <Frame CornerRadius="8"
+                       Padding="16"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{x:Static strings:AppResources.SettingsCombineType}"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+                        
+                        <Picker ItemsSource="{Binding CombineTypes}"
+                                SelectedItem="{Binding SelectedCombineType}"
+                                Title="{x:Static strings:AppResources.PickerSelectCombineType}" />
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- Split Section -->
+                <Frame CornerRadius="8"
+                       Padding="16"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{x:Static strings:AppResources.SettingsSplit}"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+                        
+                        <Grid ColumnDefinitions="*, *"
+                              ColumnSpacing="16">
+                            <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                <Label Text="{x:Static strings:AppResources.SettingsSplitPixel}" />
+                                <Entry Text="{Binding SplitPixel}"
+                                       Keyboard="Numeric"
+                                       Placeholder="Pixels" />
+                            </VerticalStackLayout>
+                            
+                            <VerticalStackLayout Grid.Column="1" Spacing="4">
+                                <Label Text="{x:Static strings:AppResources.SettingsSplitColor}" />
+                                <Border StrokeShape="RoundRectangle 8"
+                                        StrokeThickness="1"
+                                        Stroke="{StaticResource Gray300}"
+                                        HeightRequest="44">
+                                    <Grid ColumnDefinitions="Auto, *">
+                                        <BoxView Grid.Column="0"
+                                                 Color="{Binding SplitColor}"
+                                                 WidthRequest="44"
+                                                 HeightRequest="44" />
+                                        <Entry Grid.Column="1"
+                                               x:Name="SplitColorEntry"
+                                               Text="{Binding SplitColor, Converter={StaticResource ColorToHexConverter}}"
+                                               Placeholder="#000000"
+                                               VerticalOptions="Center"
+                                               Margin="8,0" />
+                                    </Grid>
+                                </Border>
+                            </VerticalStackLayout>
+                        </Grid>
+                    </VerticalStackLayout>
+                </Frame>
+                
+                <!-- Image Format Section -->
+                <Frame CornerRadius="8"
+                       Padding="16"
+                       BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}">
+                    <VerticalStackLayout Spacing="12">
+                        <Label Text="{x:Static strings:AppResources.SettingsImageFormat}"
+                               FontSize="18"
+                               FontAttributes="Bold" />
+                        
+                        <Picker ItemsSource="{Binding ImageFormats}"
+                                SelectedItem="{Binding SelectedImageFormat}"
+                                Title="{x:Static strings:AppResources.PickerSelectImageFormat}" />
+                    </VerticalStackLayout>
+                </Frame>
+                
+            </VerticalStackLayout>
+        </ScrollView>
+    </Grid>
+    
+</ContentPage>

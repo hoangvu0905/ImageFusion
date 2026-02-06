@@ -3,12 +3,32 @@
     x:Class="ImageFusion.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:ImageFusion"
-    Title="ImageFusion">
+    xmlns:pages="clr-namespace:ImageFusion.Pages"
+    xmlns:strings="clr-namespace:ImageFusion.Resources.Strings"
+    Title="ImageFusion"
+    Shell.NavBarIsVisible="False">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <Shell.FlyoutBehavior>
+        <OnPlatform x:TypeArguments="FlyoutBehavior">
+            <On Platform="iOS, Android" Value="Disabled" />
+        </OnPlatform>
+    </Shell.FlyoutBehavior>
+
+    <TabBar>
+        <ShellContent
+            Title="{x:Static strings:AppResources.TabPreview}"
+            ContentTemplate="{DataTemplate pages:PreviewPage}"
+            Route="PreviewPage" />
+        
+        <ShellContent
+            Title="{x:Static strings:AppResources.TabOriginal}"
+            ContentTemplate="{DataTemplate pages:OriginalPage}"
+            Route="OriginalPage" />
+        
+        <ShellContent
+            Title="{x:Static strings:AppResources.TabSettings}"
+            ContentTemplate="{DataTemplate pages:SettingsPage}"
+            Route="SettingsPage" />
+    </TabBar>
 
 </Shell>
